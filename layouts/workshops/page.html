@@ -1,0 +1,50 @@
+{{ define "main" }}
+{{- $section := .CurrentSection }}
+{{- $group := index (where $section.Params.groups "key" .Params.group) 0 }}
+{{- if not $group }}{{ errorf "%s: group %q ist in workshops/_index.md nicht definiert" .File.Path .Params.group }}{{ end }}
+{{- $subject := printf "Workshop: %s" .Title }}
+{{- $mailto := printf "mailto:%s?subject=%s" site.Params.email (replace (urlquery $subject) "+" "%20") }}
+
+<header class="page-head">
+  <div class="container">
+    <a class="back-link" href="{{ $section.RelPermalink }}#{{ $group.key }}">{{ partial "icon.html" "arrow-left" }}{{ T "backToWorkshops" }}</a>
+    <p class="eyebrow">{{ partial "icon.html" $group.icon }}{{ $group.title }}</p>
+    <h1>{{ .Title }}</h1>
+    {{- with .Params.teaser }}<p class="lead">{{ . }}</p>{{ end }}
+  </div>
+</header>
+
+<section class="section section-flush">
+  <div class="container workshop-layout">
+    <div>
+      {{- with .Params.packages }}
+      <h2 class="block-title">{{ T "packages" }}</h2>
+      <div class="packages">
+        {{- range . }}
+        <div class="card package">
+          <div class="package-head">
+            <h3>{{ .name }}</h3>
+            <span class="chip">{{ partial "icon.html" "clock" }}{{ .duration }}</span>
+          </div>
+          <ul class="check-list">
+            {{- range .items }}<li>{{ partial "icon.html" "check" }}<span>{{ . }}</span></li>{{ end }}
+          </ul>
+        </div>
+        {{- end }}
+      </div>
+      <h2 class="block-title">{{ T "topics" }}</h2>
+      {{- end }}
+      <div class="prose">{{ .Content }}</div>
+    </div>
+
+    <aside class="sidebar">
+      <div class="card sticky">
+        <h2>{{ T "requestWorkshop" }}</h2>
+        <p>{{ T "ctaText" }}</p>
+        <a class="btn btn-primary btn-block" href="{{ $mailto | safeURL }}">{{ partial "icon.html" "mail" }}{{ T "writeMail" }}</a>
+        <a class="btn btn-secondary btn-block" href="tel:{{ replace site.Params.phone " " "" }}">{{ partial "icon.html" "phone" }}{{ site.Params.phone }}</a>
+      </div>
+    </aside>
+  </div>
+</section>
+{{ end }}

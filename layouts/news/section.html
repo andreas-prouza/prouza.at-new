@@ -1,0 +1,22 @@
+{{ define "main" }}
+<header class="page-head">
+  <div class="container split">
+    <div>
+      <h1>{{ .Title }}</h1>
+      {{- with .Description }}<p class="lead">{{ . }}</p>{{ end }}
+    </div>
+    {{- with .OutputFormats.Get "rss" }}
+    <a class="btn btn-secondary" href="{{ .RelPermalink }}">{{ partial "icon.html" "rss" }}{{ T "rss" }}</a>
+    {{- end }}
+  </div>
+</header>
+<section class="section section-flush">
+  <div class="container">
+    <div class="grid grid-3">
+      {{- range .Pages.ByDate.Reverse }}
+      {{- partial "news-card.html" . }}
+      {{- end }}
+    </div>
+  </div>
+</section>
+{{ end }}

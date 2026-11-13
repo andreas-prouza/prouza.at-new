@@ -1,0 +1,35 @@
+<footer class="site-footer">
+  <div class="container footer-grid">
+    <div class="footer-brand">
+      <a class="brand" href="{{ site.Home.RelPermalink }}">
+        {{- partial "logo.html" (dict "size" 36) }}
+        <span class="brand-text"><strong>Andreas Prouza</strong><small>{{ site.Params.tagline }}</small></span>
+      </a>
+    </div>
+
+    <ul class="footer-list">
+      <li><a href="mailto:{{ site.Params.email }}">{{ partial "icon.html" "mail" }}{{ site.Params.email }}</a></li>
+      <li><a href="tel:{{ replace site.Params.phone " " "" }}">{{ partial "icon.html" "phone" }}{{ site.Params.phone }}</a></li>
+      <li>{{ partial "icon.html" "map-pin" }}{{ site.Params.location }}</li>
+    </ul>
+
+    <ul class="footer-list">
+      {{- range site.Menus.main }}
+      <li><a href="{{ .URL }}">{{ .Name }}</a></li>
+      {{- end }}
+    </ul>
+
+    <ul class="footer-list">
+      <li><a href="{{ site.Params.github }}" rel="me noopener">{{ partial "icon.html" "github" }}GitHub</a></li>
+      {{- with site.GetPage "/news" }}{{ with .OutputFormats.Get "rss" }}
+      <li><a href="{{ .RelPermalink }}">{{ partial "icon.html" "rss" }}{{ T "rss" }}</a></li>
+      {{- end }}{{ end }}
+      {{- range site.Menus.footer }}
+      <li><a href="{{ .URL }}">{{ .Name }}</a></li>
+      {{- end }}
+    </ul>
+  </div>
+  <div class="container footer-bottom">
+    <p>© {{ now.Year }} {{ site.Params.author }}</p>
+  </div>
+</footer>

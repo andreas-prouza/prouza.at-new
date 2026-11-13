@@ -1,0 +1,67 @@
+{{ define "main" }}
+<header class="page-head">
+  <div class="container about-head">
+    {{- with resources.Get site.Params.photo }}
+    {{- $img := .Resize "560x webp q82" }}
+    <img class="portrait portrait-sm" src="{{ $img.RelPermalink }}" width="{{ div $img.Width 2 }}" height="{{ div $img.Height 2 }}" alt="{{ site.Params.author }}">
+    {{- end }}
+    <div>
+      <h1>{{ .Title }}</h1>
+      <p class="lead"><strong>{{ site.Params.author }}</strong> – {{ site.Params.tagline }}</p>
+      <ul class="contact-inline">
+        <li><a href="mailto:{{ site.Params.email }}">{{ partial "icon.html" "mail" }}{{ site.Params.email }}</a></li>
+        <li><a href="tel:{{ replace site.Params.phone " " "" }}">{{ partial "icon.html" "phone" }}{{ site.Params.phone }}</a></li>
+        <li>{{ partial "icon.html" "map-pin" }}{{ site.Params.location }}</li>
+        <li><a href="{{ site.Params.github }}" rel="me noopener">{{ partial "icon.html" "github" }}GitHub</a></li>
+      </ul>
+    </div>
+  </div>
+</header>
+
+{{- with .Content }}
+<section class="section section-flush">
+  <div class="container"><div class="prose">{{ . }}</div></div>
+</section>
+{{- end }}
+
+{{- with .Params.badges }}
+<section class="section section-alt">
+  <div class="container">
+    <h2>{{ T "recognition" }}</h2>
+    <div class="grid grid-5">
+      {{- range . }}
+      {{- $t := .title }}
+      <a class="card badge-card" href="{{ .url }}" rel="noopener">
+        {{- with resources.Get .image }}{{ $b := .Fit "240x240 webp" }}<img src="{{ $b.RelPermalink }}" width="{{ div $b.Width 2 }}" height="{{ div $b.Height 2 }}" alt="" loading="lazy">{{ end }}
+        <span>{{ $t }}</span>
+      </a>
+      {{- end }}
+    </div>
+  </div>
+</section>
+{{- end }}
+
+{{- with .Params.projects }}
+<section class="section">
+  <div class="container">
+    <h2>{{ T "references" }}</h2>
+    <div class="grid grid-3">
+      {{- range . }}
+      <article class="card project-card">
+        {{- with .icons }}
+        <div class="project-icons">{{ range . }}{{ partial "static-img.html" (dict "src" . "alt" "") }}{{ end }}</div>
+        {{- end }}
+        <h3>{{ with .link }}<a class="stretched" href="{{ partial "link-url.html" (dict "link" . "page" $) }}"{{ if (urls.Parse .).IsAbs }} rel="noopener"{{ end }}>{{ end }}{{ .title }}{{ with .link }}</a>{{ end }}</h3>
+        <p>{{ .text }}</p>
+        {{- with .tech }}
+        <div class="chips">{{ range . }}<span class="chip">{{ . }}</span>{{ end }}</div>
+        {{- end }}
+      </article>
+      {{- end }}
+    </div>
+  </div>
+</section>
+{{- end }}
+
+{{ partial "cta.html" dict }}
+{{ end }}

@@ -1,0 +1,10 @@
+{{ define "main" }}
+<header class="page-head">
+  <div class="container narrow">
+    <p class="eyebrow">404</p>
+    <h1>{{ T "notFoundTitle" }}</h1>
+    <p class="lead">{{ T "notFoundText" }}</p>
+    <p><a class="btn btn-primary" href="{{ site.Home.RelPermalink }}">{{ T "toHome" }}{{ partial "icon.html" "arrow" }}</a></p>
+  </div>
+</header>
+{{ end }}

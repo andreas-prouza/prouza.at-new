@@ -1,0 +1,44 @@
+{{ define "main" }}
+<header class="page-head">
+  <div class="container">
+    <h1>{{ .Title }}</h1>
+    {{- with .Description }}<p class="lead">{{ . }}</p>{{ end }}
+  </div>
+</header>
+
+{{- $section := . }}
+{{- range .Params.groups }}
+{{- $pages := where $section.Pages "Params.group" .key }}
+{{- if not $pages }}{{ errorf "workshops/_index.md: Gruppe %q hat keine Workshops" .key }}{{ end }}
+<section class="section section-flush workshop-group" id="{{ .key }}">
+  <div class="container">
+    <h2 class="group-title"><span class="icon-badge">{{ partial "icon.html" .icon }}</span>{{ .title }}</h2>
+    <div class="grid grid-3">
+      {{- range $pages }}
+      {{- $ext := .Params.externalUrl }}
+      <article class="card workshop-card">
+        <h3><a class="stretched" href="{{ with $ext }}{{ . }}{{ else }}{{ .RelPermalink }}{{ end }}"{{ if $ext }} rel="noopener"{{ end }}>{{ .Title }}</a></h3>
+        {{- with .Params.teaser }}<p>{{ . }}</p>{{ end }}
+        <div class="chips">
+          {{- range .Params.packages }}
+          <span class="chip">{{ partial "icon.html" "clock" }}{{ .duration }}</span>
+          {{- end }}
+          {{- if $ext }}<span class="chip chip-muted">{{ partial "icon.html" "external" }}{{ T "external" }}</span>{{ end }}
+        </div>
+      </article>
+      {{- end }}
+    </div>
+  </div>
+</section>
+{{- end }}
+
+{{- with .Content }}
+<section class="section section-alt">
+  <div class="container">
+    <div class="prose">{{ . }}</div>
+  </div>
+</section>
+{{- end }}
+
+{{ partial "cta.html" (dict "subject" .Title) }}
+{{ end }}

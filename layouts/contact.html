@@ -1,0 +1,25 @@
+{{ define "main" }}
+<header class="page-head">
+  <div class="container narrow">
+    <h1>{{ .Title }}</h1>
+    {{- with .Description }}<p class="lead">{{ . }}</p>{{ end }}
+  </div>
+</header>
+<section class="section section-flush">
+  <div class="container narrow">
+    <div class="grid grid-2 contact-cards">
+      <a class="card contact-card" href="mailto:{{ site.Params.email }}">
+        <span class="icon-badge">{{ partial "icon.html" "mail" }}</span>
+        <span class="contact-label">{{ T "writeMail" }}</span>
+        <strong>{{ site.Params.email }}</strong>
+      </a>
+      <a class="card contact-card" href="tel:{{ replace site.Params.phone " " "" }}">
+        <span class="icon-badge">{{ partial "icon.html" "phone" }}</span>
+        <span class="contact-label">{{ T "call" }}</span>
+        <strong>{{ site.Params.phone }}</strong>
+      </a>
+    </div>
+    {{- with .Content }}<div class="prose">{{ . }}</div>{{ end }}
+  </div>
+</section>
+{{ end }}

@@ -1,0 +1,140 @@
+{{ define "main" }}
+{{- $about := site.GetPage "/ueber-mich" }}
+{{- $workshops := site.GetPage "/workshops" }}
+{{- $news := site.GetPage "/news" }}
+{{- $kontakt := site.GetPage "/kontakt" }}
+
+{{- with .Params.hero }}
+{{- $video := "" }}
+{{- with .video }}{{ $video = resources.Get . }}{{ if not $video }}{{ errorf "Startseite: hero.video %q nicht unter assets/ gefunden" . }}{{ end }}{{ end }}
+<section class="hero">
+  <div class="container hero-inner{{ if $video }} has-video{{ end }}">
+    <div class="hero-text">
+      {{- with .eyebrow }}<p class="eyebrow">{{ partial "icon.html" "award" }}{{ . }}</p>{{ end }}
+      <h1>{{ .title }}</h1>
+      <p class="lead">{{ .lead }}</p>
+      <div class="hero-actions">
+        {{- with $kontakt }}<a class="btn btn-primary" href="{{ .RelPermalink }}">{{ T "contactCta" }}{{ partial "icon.html" "arrow" }}</a>{{ end }}
+        {{- with $workshops }}<a class="btn btn-secondary" href="{{ .RelPermalink }}">{{ T "allWorkshops" }}</a>{{ end }}
+      </div>
+    </div>
+    <div class="hero-visual">
+      {{- if $video }}
+      {{- /* Kein JavaScript: autoplay nur stumm; controls zum Anhalten (WCAG 2.2.2).
+             Bei „Bewegung reduzieren“ blendet das CSS das Video aus und das Porträt ein. */}}
+      {{- $v := $video | fingerprint }}
+      {{- $poster := "" }}
+      {{- with .poster }}{{ with resources.Get . }}{{ $poster = .Resize "1280x webp q80" }}{{ else }}{{ errorf "Startseite: hero.poster %q nicht unter assets/ gefunden" . }}{{ end }}{{ end }}
+      <div class="hero-media">
+        <video class="hero-video" autoplay muted loop playsinline controls preload="auto" width="1280" height="720"
+          {{- with $poster }} poster="{{ .RelPermalink }}"{{ end }}{{ with $.Params.hero.videoLabel }} aria-label="{{ . }}"{{ end }}>
+          <source src="{{ $v.RelPermalink }}" type="video/mp4">
+        </video>
+        {{- with resources.Get site.Params.photo }}
+        {{- $img := .Resize "800x webp q82" }}
+        <img class="portrait portrait-fallback" src="{{ $img.RelPermalink }}" width="{{ div $img.Width 2 }}" height="{{ div $img.Height 2 }}" alt="{{ site.Params.author }}" loading="lazy">
+        {{- end }}
+      </div>
+      {{- else }}
+      {{- with resources.Get site.Params.photo }}
+      {{- $img := .Resize "800x webp q82" }}
+      <img class="portrait" src="{{ $img.RelPermalink }}" width="{{ div $img.Width 2 }}" height="{{ div $img.Height 2 }}" alt="{{ site.Params.author }}" fetchpriority="high">
+      {{- end }}
+      {{- end }}
+      {{- with $about }}{{ with index .Params.badges 0 }}
+      <div class="hero-badge">
+        {{- with resources.Get .image }}{{ $b := .Resize "96x webp" }}<img src="{{ $b.RelPermalink }}" width="48" height="48" alt="">{{ end }}
+        <span>{{ .title }}</span>
+      </div>
+      {{- end }}{{ end }}
+    </div>
+  </div>
+</section>
+{{- end }}
+
+<section class="section">
+  <div class="container">
+    <header class="section-head">
+      <h2>{{ T "services" }}</h2>
+      {{- with .Content }}<div class="section-intro">{{ . }}</div>{{ end }}
+    </header>
+    <div class="grid grid-3">
+      {{- range .Params.services }}
+      {{- $target := "" }}
+      {{- with .link }}{{ $target = partial "link-url.html" (dict "link" . "page" $) }}{{ end }}
+      <article class="card service-card">
+        <span class="icon-badge">{{ partial "icon.html" .icon }}</span>
+        <h3>{{ if $target }}<a class="stretched" href="{{ $target }}">{{ .title }}</a>{{ else }}{{ .title }}{{ end }}</h3>
+        <p>{{ .text }}</p>
+        {{- if $target }}<span class="more">{{ T "readMore" }}{{ partial "icon.html" "arrow" }}</span>{{ end }}
+      </article>
+      {{- end }}
+    </div>
+  </div>
+</section>
+
+{{- with $workshops }}
+<section class="section section-alt">
+  <div class="container">
+    <header class="section-head split">
+      <div>
+        <h2>{{ .Title }}</h2>
+        {{- with .Description }}<p class="section-intro">{{ . }}</p>{{ end }}
+      </div>
+      <a class="btn btn-secondary" href="{{ .RelPermalink }}">{{ T "allWorkshops" }}{{ partial "icon.html" "arrow" }}</a>
+    </header>
+    <div class="grid grid-4">
+      {{- $section := . }}
+      {{- range .Params.groups }}
+      {{- $key := .key }}
+      <div class="card group-card">
+        <span class="icon-badge">{{ partial "icon.html" .icon }}</span>
+        <h3>{{ .title }}</h3>
+        <ul class="link-list">
+          {{- range where $section.Pages "Params.group" $key }}
+          <li><a href="{{ with .Params.externalUrl }}{{ . }}{{ else }}{{ .RelPermalink }}{{ end }}">{{ .Title }}</a></li>
+          {{- end }}
+        </ul>
+      </div>
+      {{- end }}
+    </div>
+  </div>
+</section>
+{{- end }}
+
+{{- with $news }}
+<section class="section">
+  <div class="container">
+    <header class="section-head split">
+      <h2>{{ T "latestNews" }}</h2>
+      <a class="btn btn-secondary" href="{{ .RelPermalink }}">{{ T "allNews" }}{{ partial "icon.html" "arrow" }}</a>
+    </header>
+    <div class="grid grid-3">
+      {{- range first 3 .Pages.ByDate.Reverse }}
+      {{- partial "news-card.html" . }}
+      {{- end }}
+    </div>
+  </div>
+</section>
+{{- end }}
+
+{{- with $about }}{{ with .Params.badges }}
+<section class="section section-tight">
+  <div class="container">
+    <h2 class="visually-hidden">{{ T "recognition" }}</h2>
+    <ul class="badge-row">
+      {{- range . }}
+      {{- $title := .title }}
+      <li>
+        <a href="{{ .url }}" rel="noopener" title="{{ $title }}">
+          {{- with resources.Get .image }}{{ $b := .Resize "x160 webp" }}<img src="{{ $b.RelPermalink }}" width="{{ div $b.Width 2 }}" height="80" alt="{{ $title }}" loading="lazy">{{ end }}
+        </a>
+      </li>
+      {{- end }}
+    </ul>
+  </div>
+</section>
+{{- end }}{{ end }}
+
+{{ partial "cta.html" dict }}
+{{ end }}

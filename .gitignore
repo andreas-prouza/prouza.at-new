@@ -1,0 +1,4 @@
+# Hugo-Ausgabe und Caches
+/public/
+/resources/_gen/
+.hugo_build.lock

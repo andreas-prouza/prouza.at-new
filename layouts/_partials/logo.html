@@ -1,0 +1,5 @@
+{{- /* Kompass-Ausschnitt aus assets/img/logo.png. Parameter: dict "size" <px> */ -}}
+{{- with resources.Get "img/logo.png" -}}
+  {{- $mark := (.Crop "256x248 Left").Resize (printf "%dx png" (mul $.size 2)) -}}
+  <img class="logo-mark" src="{{ $mark.RelPermalink }}" width="{{ $.size }}" height="{{ div (mul $.size 248) 256 }}" alt="">
+{{- end -}}

@@ -1,0 +1,16 @@
+<article class="card news-card">
+  <a class="card-link" href="{{ .RelPermalink }}">
+    <div class="news-thumb">
+      {{- with .Params.image }}
+      {{- partial "static-img.html" (dict "src" . "alt" "") }}
+      {{- else }}
+      {{- partial "logo.html" (dict "size" 72) }}
+      {{- end }}
+    </div>
+    <div class="card-body">
+      <time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date | time.Format ":date_long" }}</time>
+      <h3>{{ .Title }}</h3>
+      <p>{{ .Summary | plainify | htmlUnescape | truncate 140 }}</p>
+    </div>
+  </a>
+</article>

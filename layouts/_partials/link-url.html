@@ -1,0 +1,27 @@
+{{- /*
+  Löst einen Link aus dem Front Matter auf und gibt die URL zurück.
+  Parameter: dict "link" "/produkte#imail" "page" .   (page: für die Fehlermeldung)
+  - https://…            → unverändert
+  - /pfad[#anker]        → Content-Pfad der aktuellen Sprache, Anker wird angehängt
+  Ein Ziel, das es nicht gibt, bricht den Build ab. Hat die Zielseite Karten-IDs im
+  Front Matter (groups[].items[].id, z. B. Produkte), muss der Anker eine davon sein.
+*/ -}}
+{{- $u := urls.Parse .link -}}
+{{- $url := .link -}}
+{{- $where := .page.File.Path -}}
+{{- if not $u.IsAbs -}}
+  {{- with site.GetPage (strings.TrimSuffix "/" $u.Path) -}}
+    {{- $url = .RelPermalink -}}
+    {{- with $u.Fragment -}}
+      {{- $url = printf "%s#%s" $url . -}}
+    {{- end -}}
+    {{- $ids := slice -}}
+    {{- range .Params.groups }}{{ range .items }}{{ with .id }}{{ $ids = $ids | append . }}{{ end }}{{ end }}{{ end -}}
+    {{- if and $u.Fragment $ids (not (in $ids $u.Fragment)) -}}
+      {{- errorf "%s: Anker %q gibt es auf %s nicht" $where $u.Fragment .File.Path -}}
+    {{- end -}}
+  {{- else -}}
+    {{- errorf "%s: Link-Ziel %q nicht gefunden" $where .link -}}
+  {{- end -}}
+{{- end -}}
+{{- return $url -}}

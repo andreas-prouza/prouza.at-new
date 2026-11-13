@@ -1,0 +1,39 @@
+{{- /*
+  Links im Markdown:
+  - extern (https:, mailto:, tel:)  → unverändert, bei http(s) mit rel="noopener"
+  - /img/… und /doc/…               → Datei muss unter static/ existieren
+  - /pfad[#anker]                   → Content-Pfad der gleichen Sprache (z. B. /workshops/rpg),
+                                      wird zur richtigen URL aufgelöst
+  - /<sprache>/pfad                 → Seite in der anderen Sprache (z. B. /de/impressum)
+  Ein Ziel, das es nicht gibt, bricht den Build ab.
+*/ -}}
+{{- $u := urls.Parse .Destination -}}
+{{- $href := .Destination -}}
+{{- $external := false -}}
+{{- if $u.IsAbs -}}
+  {{- $external = in (slice "http" "https") $u.Scheme -}}
+{{- else if strings.HasPrefix $u.Path "/" -}}
+  {{- if or (strings.HasPrefix $u.Path "/img/") (strings.HasPrefix $u.Path "/doc/") -}}
+    {{- if not (fileExists (path.Join "static" $u.Path)) }}{{ errorf "%s: Datei %q fehlt unter static/" .Page.File.Path .Destination }}{{ end -}}
+  {{- else -}}
+    {{- $target := false -}}
+    {{- with .Page.GetPage (strings.TrimSuffix "/" $u.Path) -}}
+      {{- $target = . -}}
+    {{- else -}}
+      {{- /* /<sprache>/pfad: Seite in der anderen Sprache (z. B. /de/impressum) */ -}}
+      {{- $lang := index (split (strings.TrimPrefix "/" $u.Path) "/") 0 -}}
+      {{- $rest := strings.TrimSuffix "/" (strings.TrimPrefix (printf "/%s" $lang) $u.Path) -}}
+      {{- with $.Page.GetPage $rest -}}
+        {{- range .AllTranslations }}{{ if eq .Language.Lang $lang }}{{ $target = . }}{{ end }}{{ end -}}
+      {{- end -}}
+    {{- end -}}
+    {{- with $target -}}
+      {{- $href = .RelPermalink -}}
+      {{- with $u.Fragment }}{{ $href = printf "%s#%s" $href . }}{{ end -}}
+    {{- else -}}
+      {{- errorf "%s: Link-Ziel %q nicht gefunden" .Page.File.Path .Destination -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+<a href="{{ $href | safeURL }}"{{ with .Title }} title="{{ . }}"{{ end }}{{ if $external }} rel="noopener"{{ end }}>{{ .Text }}</a>
+{{- /* kein Zeilenumbruch am Ende */ -}}

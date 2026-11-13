@@ -1,0 +1,15 @@
+{{- /* Kontakt-Band am Seitenende. Parameter: dict "subject" <Betreff für die Mail> (optional) */ -}}
+{{- $mailto := printf "mailto:%s" site.Params.email -}}
+{{- with .subject }}{{ $mailto = printf "%s?subject=%s" $mailto (replace (urlquery .) "+" "%20") }}{{ end -}}
+<section class="cta">
+  <div class="container cta-inner">
+    <div>
+      <h2>{{ T "ctaTitle" }}</h2>
+      <p>{{ T "ctaText" }}</p>
+    </div>
+    <div class="cta-actions">
+      <a class="btn btn-light" href="{{ $mailto | safeURL }}">{{ partial "icon.html" "mail" }}{{ T "writeMail" }}</a>
+      <a class="btn btn-ghost-light" href="tel:{{ replace site.Params.phone " " "" }}">{{ partial "icon.html" "phone" }}{{ site.Params.phone }}</a>
+    </div>
+  </div>
+</section>

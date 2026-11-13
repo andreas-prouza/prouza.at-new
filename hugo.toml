@@ -1,0 +1,110 @@
+baseURL = "https://www.prouza.at/"
+title = "Andreas Prouza"
+defaultContentLanguage = "de"
+defaultContentLanguageInSubdir = true
+enableRobotsTXT = true
+# Kein Tagging/Kategorien: weniger Seiten, weniger Pflege
+disableKinds = ["taxonomy", "term"]
+# Links/Bilder auf fehlende Ziele brechen den Build ab (siehe layouts/_markup)
+refLinksErrorLevel = "ERROR"
+
+[params]
+  author = "Ing. Andreas Prouza"
+  description = "IBM i – Schulungen, Workshops, Beratung und Projekte"
+  email = "andreas@prouza.at"
+  phone = "+43 664 883 69 605"
+  github = "https://github.com/andreas-prouza"
+  # Pfad unter assets/ (wird von Hugo skaliert und als WebP ausgeliefert)
+  photo = "img/portrait.jpg"
+
+[languages]
+  [languages.de]
+    contentDir = "content/de"
+    label = "Deutsch"
+    locale = "de-AT"
+    weight = 1
+    [languages.de.params]
+      tagline = "IBM i: Schulung · Beratung · Projekte"
+      location = "Ternitz, Österreich"
+  [languages.en]
+    contentDir = "content/en"
+    label = "English"
+    locale = "en-US"
+    weight = 2
+    [languages.en.params]
+      tagline = "IBM i: Training · Consulting · Projects"
+      location = "Ternitz, Austria"
+
+# Hauptmenü je Sprache; pageRef = Pfad im content/<sprache>-Ordner
+[languages.de.menus]
+  [[languages.de.menus.main]]
+    name = "Workshops"
+    pageRef = "/workshops"
+    weight = 10
+  [[languages.de.menus.main]]
+    name = "News"
+    pageRef = "/news"
+    weight = 20
+  [[languages.de.menus.main]]
+    name = "Produkte"
+    pageRef = "/produkte"
+    weight = 30
+  [[languages.de.menus.main]]
+    name = "Über mich"
+    pageRef = "/ueber-mich"
+    weight = 40
+  [[languages.de.menus.footer]]
+    name = "Impressum & Datenschutz"
+    pageRef = "/impressum"
+    weight = 10
+
+[languages.en.menus]
+  [[languages.en.menus.main]]
+    name = "Workshops"
+    pageRef = "/workshops"
+    weight = 10
+  [[languages.en.menus.main]]
+    name = "News"
+    pageRef = "/news"
+    weight = 20
+  [[languages.en.menus.main]]
+    name = "Products"
+    pageRef = "/produkte"
+    weight = 30
+  [[languages.en.menus.main]]
+    name = "About me"
+    pageRef = "/ueber-mich"
+    weight = 40
+  [[languages.en.menus.footer]]
+    name = "Imprint & privacy"
+    pageRef = "/impressum"
+    weight = 10
+
+[markup]
+  [markup.goldmark.renderer]
+    # Kein rohes HTML im Markdown (Sicherheit, siehe docs/architektur.md)
+    unsafe = false
+  [markup.goldmark.parser.attribute]
+    block = true
+  [markup.highlight]
+    # CSS-Klassen statt Inline-Styles, damit die CSP ohne 'unsafe-inline' auskommt
+    noClasses = false
+
+[outputs]
+  home = ["html", "rss"]
+  section = ["html", "rss"]
+  page = ["html"]
+
+[services.rss]
+  limit = 20
+
+[minify]
+  minifyOutput = true
+
+[caches.images]
+  dir = ":cacheDir/images"
+
+# Layout-Struktur (layouts/_partials, _markup) braucht Hugo 0.146+
+[module.hugoVersion]
+  min = "0.146.0"
+  extended = true

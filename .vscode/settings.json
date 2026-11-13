@@ -1,0 +1,16 @@
+{
+    "command-runner.terminal.name": "prouza.at",
+    "command-runner.terminal.autoClear": true,
+    "command-runner.terminal.autoFocus": true,
+    "command-runner.commands": {
+        "Veröffentlichen (prouza.at)": "\"${workspaceFolder}/scripts/veroeffentlichen.sh\"",
+        "Probelauf (prouza.at)": "\"${workspaceFolder}/scripts/veroeffentlichen.sh\" --probelauf",
+        "Sicherung holen (prouza.at)": "rsync -a prouza.at:/var/customers/webs/prouza/var/www/prouza.at/ ~/prouza.at-sicherung-$(date +%F)/ && du -sh ~/prouza.at-sicherung-$(date +%F)/",
+        "Header prüfen (prouza.at)": "curl -sSI https://www.prouza.at/de/",
+        "Fehler-Log (prouza.at)": "ssh -t prouza.at 'tail -n 50 -f /var/customers/logs/prouza-error.log'",
+        "Zugriffs-Log (prouza.at)": "ssh -t prouza.at 'tail -n 50 -f /var/customers/logs/prouza-access.log'",
+        "Vorschau": "cd \"${workspaceFolder}\" && hugo server --navigateToChanged",
+        "Vorschau inkl. Entwürfe": "cd \"${workspaceFolder}\" && hugo server -D --navigateToChanged",
+        "Prüfen": "\"${workspaceFolder}/scripts/pruefen.sh\""
+    }
+}

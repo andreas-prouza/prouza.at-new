@@ -1,0 +1,18 @@
+{{ define "main" }}
+<article>
+  <header class="page-head">
+    <div class="container narrow">
+      <a class="back-link" href="{{ .CurrentSection.RelPermalink }}">{{ partial "icon.html" "arrow-left" }}{{ T "backToNews" }}</a>
+      <p class="eyebrow">{{ partial "icon.html" "clock" }}<time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date | time.Format ":date_long" }}</time></p>
+      <h1>{{ .Title }}</h1>
+      {{- with .Description }}<p class="lead">{{ . }}</p>{{ end }}
+    </div>
+  </header>
+  <div class="section section-flush">
+    <div class="container narrow prose">
+      {{ .Content }}
+    </div>
+  </div>
+</article>
+{{ partial "cta.html" (dict "subject" .Title) }}
+{{ end }}

@@ -1,0 +1,46 @@
+{{ define "main" }}
+<header class="page-head">
+  <div class="container">
+    <h1>{{ .Title }}</h1>
+    {{- with .Description }}<p class="lead">{{ . }}</p>{{ end }}
+  </div>
+</header>
+
+{{- range .Params.groups }}
+<section class="section section-flush">
+  <div class="container">
+    <h2 class="group-title"><span class="icon-badge">{{ partial "icon.html" .icon }}</span>{{ .title }}</h2>
+    {{- with .intro }}<p class="section-intro">{{ . | markdownify }}</p>{{ end }}
+    <div class="grid grid-2">
+      {{- range .items }}
+      <article class="card product-card" {{ with .id }}id="{{ . }}"{{ end }}>
+        {{- with .image }}<div class="product-logo">{{ partial "static-img.html" (dict "src" . "alt" "") }}</div>{{ end }}
+        <h3>{{ .title }}</h3>
+        <p>{{ .text | markdownify }}</p>
+        {{- with .features }}
+        <ul class="check-list">
+          {{- range . }}<li>{{ partial "icon.html" "check" }}<span>{{ . }}</span></li>{{ end }}
+        </ul>
+        {{- end }}
+        <div class="card-actions">
+          {{- range .links }}
+          {{- $icon := cond (strings.HasPrefix .url "/doc/") "file" (cond (strings.Contains .url "github.com") "github" "external") }}
+          {{- if strings.HasPrefix .url "/doc/" }}{{ if not (fileExists (path.Join "static" .url)) }}{{ errorf "produkte.md: Datei %q fehlt" .url }}{{ end }}{{ end }}
+          <a class="btn btn-secondary btn-sm" href="{{ .url }}"{{ if not (strings.HasPrefix .url "/") }} rel="noopener"{{ end }}>{{ partial "icon.html" $icon }}{{ .label }}</a>
+          {{- end }}
+        </div>
+      </article>
+      {{- end }}
+    </div>
+  </div>
+</section>
+{{- end }}
+
+{{- with .Content }}
+<section class="section section-alt">
+  <div class="container narrow prose">{{ . }}</div>
+</section>
+{{- end }}
+
+{{ partial "cta.html" (dict "subject" .Title) }}
+{{ end }}

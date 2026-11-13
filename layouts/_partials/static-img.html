@@ -1,0 +1,20 @@
+{{- /*
+  Bild mit Breite/Höhe (verhindert Springen beim Laden).
+  Parameter: dict "src" "/img/x.png" "alt" "..." ["class" "..."]
+  Suche: zuerst assets/<pfad> (wird auf max. 1200 px verkleinert), dann static/<pfad>.
+  Fehlende Dateien und externe Bilder brechen den Build ab.
+*/ -}}
+{{- $u := urls.Parse .src -}}
+{{- if $u.IsAbs }}{{ errorf "Externes Bild %q ist nicht erlaubt (docs/architektur.md)" .src }}{{ end -}}
+{{- $src := $u.Path }}{{ $w := 0 }}{{ $h := 0 -}}
+{{- $isSvg := strings.HasSuffix (lower $u.Path) ".svg" -}}
+{{- with resources.Get (strings.TrimPrefix "/" $u.Path) -}}
+  {{- $img := . -}}
+  {{- if not $isSvg }}{{ if gt .Width 1200 }}{{ $img = .Resize "1200x" }}{{ end }}{{ $w = $img.Width }}{{ $h = $img.Height }}{{ end -}}
+  {{- $src = $img.RelPermalink -}}
+{{- else -}}
+  {{- $file := path.Join "static" $u.Path -}}
+  {{- if not (fileExists $file) }}{{ errorf "Bild %q fehlt (weder unter assets/ noch unter static/)" .src }}{{ end -}}
+  {{- if not $isSvg }}{{ with images.Config $file }}{{ $w = .Width }}{{ $h = .Height }}{{ end }}{{ end -}}
+{{- end -}}
+<img src="{{ $src }}" alt="{{ .alt }}"{{ with $w }} width="{{ . }}"{{ end }}{{ with $h }} height="{{ . }}"{{ end }}{{ with .class }} class="{{ . }}"{{ end }} loading="lazy" decoding="async">
