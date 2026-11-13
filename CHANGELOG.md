@@ -3,7 +3,7 @@
 ## 2026-11-13
 
 ### Neu
-- Startseite: OBI-Intro-Video im Hero statt Porträt (stumm, Schleife, mit Bedienelementen; 720p-Webfassung, 1,8 MB). Bei „Bewegung reduzieren“ erscheint weiterhin das Porträt.
+- Startseite: OBI-Intro-Video im Hero statt Porträt (stumm, Schleife, mit Bedienelementen; 720p-Webfassung, 2,4 MB; neue Videofassung, Webfassung und Poster neu erzeugt). Bei „Bewegung reduzieren“ erscheint weiterhin das Porträt.
 - `.htaccess`: CSP erlaubt eigene Videos (`media-src 'self'`); MP4 wird 1 Jahr gecacht (Fingerprint)
 
 ## 2026-11-10 – Neuaufbau

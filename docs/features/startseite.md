@@ -41,6 +41,7 @@ Erster Eindruck: wer ich bin, was ich anbiete, was es Neues gibt – und der Weg
 * 2026-11-13: Webfassung in 720p (`assets/video/obi-intro-720.mp4`, 1,8 MB statt 14 MB für das 1080p-Original) – im Hero ist das Video höchstens ca. 600 px breit; Fingerprint im Dateinamen, 1 Jahr Cache. Erzeugt mit:
   `ffmpeg -i obi-intro.mp4 -vf scale=1280:-2 -c:v libx264 -crf 28 -preset slow -pix_fmt yuv420p -movflags +faststart -an obi-intro-720.mp4`;
   Poster: `ffmpeg -ss 1.5 -i obi-intro.mp4 -frames:v 1 -q:v 3 obi-intro-poster.jpg`
+* 2026-11-13: Die Seite verwendet nur die Webfassung und das Poster, nicht das Original. **Nach jedem Austausch von `obi-intro.mp4` beide neu erzeugen**, sonst ändert sich der Build nicht und das Deployment meldet „Nichts zu tun.“ Neues Video: 2,4 MB (Original 18,9 MB).
 * 2026-11-13: Mit Video sitzt das Badge unter dem Video statt darüber, damit es die Bedienelemente nicht verdeckt.
 
 ## Akzeptanzkriterien
